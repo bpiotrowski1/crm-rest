@@ -14,6 +14,7 @@ import java.util.List;
 
 import static pl.bpiotrowski.crmrest.constants.Statics.PAGE_SIZE;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/customers")
