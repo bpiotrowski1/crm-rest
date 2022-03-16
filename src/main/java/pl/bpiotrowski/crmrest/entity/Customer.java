@@ -15,7 +15,22 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @GeneratedValue
+    @Column(nullable = false, unique = true)
     private String name;
+
+    @Column
+    private String firstField;
+
+    @Column
+    private String secondField;
+
+    @Column
+    private String thirdField;
+
+    @Column
+    private String fourthField;
+
+    @Column
+    private String textArea;
 
 }

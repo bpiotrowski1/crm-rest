@@ -10,12 +10,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.bpiotrowski.crmrest.entity.Customer;
+import pl.bpiotrowski.crmrest.exception.CustomerAlreadyExistsException;
+import pl.bpiotrowski.crmrest.exception.CustomerNotFoundException;
 import pl.bpiotrowski.crmrest.repository.CustomerRepository;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,7 +41,6 @@ public class CustomerControllerTest {
 
     @Test
     public void getAllTest() throws Exception {
-        // given
         String customer1Name = "customer1";
         String customer2Name = "customer2";
         Customer customer1 = create(customer1Name);
@@ -46,7 +48,6 @@ public class CustomerControllerTest {
         customerRepository.save(customer1);
         customerRepository.save(customer2);
 
-        // when
         mockMvc.perform(
                         get("/api/customers?pageIndex=0&pageSize=10&sortDirection=ASC&sortColumn=id")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -58,16 +59,23 @@ public class CustomerControllerTest {
 
     @Test
     public void getOneTest() throws Exception {
-        // given
         String name = "test name";
         Customer customer = create(name);
         Long id = customerRepository.save(customer).getId();
 
-        // when
         mockMvc.perform(get("/api/customers/{id}", id).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(Integer.valueOf(String.valueOf(id)))))
                 .andExpect(jsonPath("$.name", is(name)));
+    }
+
+    @Test
+    public void getOneWhichNotExist() throws Exception {
+        Long id = 1L;
+
+        mockMvc.perform(get("/api/customers/{id}", id).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof CustomerNotFoundException));
     }
 
     @Test
@@ -103,6 +111,25 @@ public class CustomerControllerTest {
         // then
         List<Customer> result = customerRepository.findAll();
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    public void createWithExistingName() throws Exception {
+        //given
+        String customerName = "test";
+        String customerJson = "{\"name\":\"{name}\"}"
+                .replace("{name}", customerName);
+
+        // when
+        mockMvc.perform(post("/api/customers").contentType(MediaType.APPLICATION_JSON).content(customerJson))
+                .andExpect(status().isCreated());
+        mockMvc.perform(post("/api/customers").contentType(MediaType.APPLICATION_JSON).content(customerJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof CustomerAlreadyExistsException));
+
+        // then
+        List<Customer> customers = customerRepository.findAll();
+        assertThat(customers).hasSize(1);
     }
 
     @Test

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.bpiotrowski.crmrest.dto.CustomerDto;
 import pl.bpiotrowski.crmrest.entity.Customer;
+import pl.bpiotrowski.crmrest.exception.CustomerAlreadyExistsException;
 import pl.bpiotrowski.crmrest.exception.CustomerNotFoundException;
 import pl.bpiotrowski.crmrest.mapper.CustomerMapper;
 import pl.bpiotrowski.crmrest.repository.CustomerRepository;
@@ -32,6 +33,9 @@ public class CustomerService {
     }
 
     public CustomerDto create(CustomerDto dto) {
+        if (!customerExists(dto.getName())) {
+            throw new CustomerAlreadyExistsException(dto.getName());
+        }
         Customer entity = customerMapper.map(dto);
         Customer savedEntity = customerRepository.save(entity);
         return customerMapper.map(savedEntity);
@@ -41,6 +45,11 @@ public class CustomerService {
         Customer updatedCustomer = customerRepository.findById(dto.getId())
                 .orElseThrow(() -> new CustomerNotFoundException(dto.getId()));
         updatedCustomer.setName(dto.getName());
+        updatedCustomer.setFirstField(dto.getFirstField());
+        updatedCustomer.setSecondField(dto.getSecondField());
+        updatedCustomer.setThirdField(dto.getThirdField());
+        updatedCustomer.setFourthField(dto.getFourthField());
+        updatedCustomer.setTextArea(dto.getTextArea());
         customerRepository.save(updatedCustomer);
         return customerMapper.map(updatedCustomer);
     }
@@ -49,6 +58,10 @@ public class CustomerService {
         Customer task = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException(id));
         customerRepository.delete(task);
+    }
+
+    private boolean customerExists(String name) {
+        return customerRepository.findCustomerByName(name) == null;
     }
 
 
