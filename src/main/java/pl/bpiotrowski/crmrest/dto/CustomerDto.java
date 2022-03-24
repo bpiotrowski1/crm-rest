@@ -1,9 +1,10 @@
 package pl.bpiotrowski.crmrest.dto;
 
-import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import lombok.Data;
 
 @Data
 public class CustomerDto {
