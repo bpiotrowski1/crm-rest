@@ -22,6 +22,6 @@ public class SettingDto {
 	private String fourthFieldName;
 	
 	@Size(min = 3, max = 255, message = "Name must be greter than 3 and less than 255 chars")
-	private String textareaName;
+	private String textAreaName;
 	
 }

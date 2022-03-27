@@ -33,6 +33,6 @@ public class Setting {
 	private String fourthFieldName;
 	
 	@Column
-	private String textareaName;
+	private String textAreaName;
 			
 }

@@ -33,7 +33,7 @@ public class SettingService {
         updatedSetting.setSecondFieldName(dto.getSecondFieldName());
         updatedSetting.setThirdFieldName(dto.getThirdFieldName());
         updatedSetting.setFourthFieldName(dto.getFourthFieldName());
-        updatedSetting.setTextareaName(dto.getTextareaName());
+        updatedSetting.setTextAreaName(dto.getTextAreaName());
         settingRepository.save(updatedSetting);
         return settingMapper.map(updatedSetting);
     }
