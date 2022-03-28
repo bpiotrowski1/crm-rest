@@ -1,8 +1,9 @@
 package pl.bpiotrowski.crmrest.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
 import pl.bpiotrowski.crmrest.dto.CustomerDto;
 import pl.bpiotrowski.crmrest.entity.Customer;
 import pl.bpiotrowski.crmrest.exception.CustomerAlreadyExistsException;
